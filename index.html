@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Palette Printer</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <main class="container">
+    <h1>Palette Printer</h1>
+    <p class="subtitle">Ultra clean color ramp generator</p>
+
+    <div class="controls">
+      <input type="color" id="colorPicker" value="#6D7CFF" />
+      <input type="text" id="hexInput" value="#6D7CFF" />
+    </div>
+
+    <div id="palette" class="palette"></div>
+  </main>
+
+  <script>
+    const picker = document.getElementById("colorPicker");
+    const input = document.getElementById("hexInput");
+    const palette = document.getElementById("palette");
+
+    function hexToRgb(hex) {
+      const h = hex.replace("#", "");
+      const bigint = parseInt(h, 16);
+      const r = (bigint >> 16) & 255;
+      const g = (bigint >> 8) & 255;
+      const b = bigint & 255;
+      return { r, g, b };
+    }
+
+    function rgbToHex(r, g, b) {
+      return (
+        "#" +
+        [r, g, b]
+          .map(x => x.toString(16).padStart(2, "0"))
+          .join("")
+      );
+    }
+
+    function mix(hex, amount) {
+      const { r, g, b } = hexToRgb(hex);
+      const mixWith = amount > 0 ? 255 : 0;
+      const factor = Math.abs(amount);
+
+      return rgbToHex(
+        Math.round(r + (mixWith - r) * factor),
+        Math.round(g + (mixWith - g) * factor),
+        Math.round(b + (mixWith - b) * factor)
+      );
+    }
+
+    function generate(hex) {
+      palette.innerHTML = "";
+
+      const steps = [-0.6, -0.4, -0.2, 0, 0.2, 0.4, 0.6];
+
+      steps.forEach(step => {
+        const color = mix(hex, step);
+        const box = document.createElement("div");
+        box.className = "swatch";
+        box.style.background = color;
+        box.innerText = color;
+        box.onclick = () => navigator.clipboard.writeText(color);
+        palette.appendChild(box);
+      });
+    }
+
+    picker.addEventListener("input", e => {
+      input.value = e.target.value;
+      generate(e.target.value);
+    });
+
+    input.addEventListener("input", e => {
+      picker.value = e.target.value;
+      generate(e.target.value);
+    });
+
+    generate(picker.value);
+  </script>
+
+</body>
+</html>
