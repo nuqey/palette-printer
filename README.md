@@ -1,3 +1,4 @@
+<img width="1439" height="1079" alt="image" src="https://github.com/user-attachments/assets/eb9111a0-8f31-4d66-a510-797f14d27992" />
 # Palette Printer
 
 Ultra clean light color ramp generator built with pure HTML, CSS and JavaScript.
